@@ -17,7 +17,7 @@ import {
   INSUFFICIENT_TOKENS_ERROR,
   INVALID_RECIPIENT_ADDRESS_ERROR,
   INVALID_RECIPIENT_ADDRESS_NOT_ETH_NETWORK_ERROR,
-  KNOWN_RECIPIENT_ADDRESS_ERROR,
+  KNOWN_RECIPIENT_ADDRESS_WARNING,
   MIN_GAS_LIMIT_HEX,
   NEGATIVE_ETH_ERROR,
 } from '../../pages/send/send.constants';
@@ -82,12 +82,12 @@ const name = 'send';
  * 1. UNINITIALIZED - The send state is idle, and hasn't yet fetched required
  *  data for gasPrice and gasLimit estimations, etc.
  * 1. ADD_RECIPIENT - The user is selecting which address to send an asset to
- * 2. DRAFT - The send form is shown for a transaction yet to be submitted to
- *  the network.
- * 3. EDIT - The send form is shown for a transaction already submitted that
- *  has not yet been signed (confirmed). This happens when the confirmation
- *  page shows the 'edit' button in top left and the user can drop back to
- *  modify transaction details.
+ * 2. DRAFT - The send form is shown for a transaction yet to be sent to the
+ *  Transaction Controller.
+ * 3. EDIT - The send form is shown for a transaction already submitted to the
+ *  Transaction Controller but not yet confirmed. This happens when a
+ *  confirmation is shown for a transaction and the 'edit' button in the header
+ *  is clicked.
  */
 export const SEND_STAGES = {
   UNINITIALIZED: 'UNINITIALIZED',
@@ -433,7 +433,7 @@ export const initialState = {
     details: null,
   },
   draftTransaction: {
-    // The metamask internal id of the transaction. Only populated in theEDIT
+    // The metamask internal id of the transaction. Only populated in the EDIT
     // stage.
     id: null,
     // The hex encoded data provided by the user who has enabled hex data field
@@ -480,8 +480,6 @@ const slice = createSlice({
       slice.caseReducers.validateAmountField(state);
       // validate send state
       slice.caseReducers.validateSendState(state);
-      // Recompute the draftTransaction object
-      slice.caseReducers.updateDraftTransaction(state);
     },
     /**
      * computes the maximum amount of asset that can be sent and then calls
@@ -548,52 +546,39 @@ const slice = createSlice({
       slice.caseReducers.updateDraftTransaction(state);
     },
     /**
-     * sets the provided gasLimit in state and then recomputes the gasTotal,
-     * setting that value in state as well. Once gasTotal is computed
+     * gasTotal is computed based on gasPrice and gasLimit and set in state
      * recomputes the maximum amount if the current amount mode is 'MAX' and
      * sending the native token. ERC20 assets max amount is unaffected by
      * gasTotal so does not need to be recomputed. Finally, validates the gas
      * field and send state, then updates the draft transaction.
+     */
+    calculateGasTotal: (state) => {
+      state.gas.gasTotal = addHexPrefix(
+        calcGasTotal(state.gas.gasLimit, state.gas.gasPrice),
+      );
+      if (
+        state.amount.mode === AMOUNT_MODES.MAX &&
+        state.asset.type === ASSET_TYPES.NATIVE
+      ) {
+        slice.caseReducers.updateAmountToMax(state);
+      }
+      slice.caseReducers.validateGasField(state);
+      // validate send state
+      slice.caseReducers.validateSendState(state);
+    },
+    /**
+     * sets the provided gasLimit in state and then recomputes the gasTotal.
      */
     updateGasLimit: (state, action) => {
       state.gas.gasLimit = addHexPrefix(action.payload);
-      state.gas.gasTotal = addHexPrefix(
-        calcGasTotal(state.gas.gasLimit, state.gas.gasPrice),
-      );
-      if (
-        state.amount.mode === AMOUNT_MODES.MAX &&
-        state.asset.type === ASSET_TYPES.NATIVE
-      ) {
-        slice.caseReducers.updateAmountToMax(state);
-      }
-      slice.caseReducers.validateGasField(state);
-      // validate send state
-      slice.caseReducers.validateSendState(state);
-      slice.caseReducers.updateDraftTransaction(state);
+      slice.caseReducers.calculateGasTotal(state);
     },
     /**
-     * sets the provided gasPrice in state and then recomputes the gasTotal,
-     * setting that value in state as well. Once gasTotal is computed
-     * recomputes the maximum amount if the current amount mode is 'MAX' and
-     * sending the native token. ERC20 assets max amount is unaffected by
-     * gasTotal so does not need to be recomputed. Finally, validates the gas
-     * field and send state, then updates the draft transaction.
+     * sets the provided gasPrice in state and then recomputes the gasTotal
      */
     updateGasPrice: (state, action) => {
       state.gas.gasPrice = addHexPrefix(action.payload);
-      state.gas.gasTotal = addHexPrefix(
-        calcGasTotal(state.gas.gasLimit, state.gas.gasPrice),
-      );
-      if (
-        state.amount.mode === AMOUNT_MODES.MAX &&
-        state.asset.type === ASSET_TYPES.NATIVE
-      ) {
-        slice.caseReducers.updateAmountToMax(state);
-      }
-      slice.caseReducers.validateGasField(state);
-      // validate send state
-      slice.caseReducers.validateSendState(state);
-      slice.caseReducers.updateDraftTransaction(state);
+      slice.caseReducers.calculateGasTotal(state);
     },
     /**
      * sets the amount mode to the provided value as long as it is one of the
@@ -618,7 +603,7 @@ const slice = createSlice({
           state.recipient.error = null;
         }
 
-        if (state.recipient.warning === KNOWN_RECIPIENT_ADDRESS_ERROR) {
+        if (state.recipient.warning === KNOWN_RECIPIENT_ADDRESS_WARNING) {
           // Warning related to sending tokens to a known contract address
           // are no longer valid when sending native currency.
           state.recipient.warning = null;
@@ -633,8 +618,6 @@ const slice = createSlice({
       }
       // validate send state
       slice.caseReducers.validateSendState(state);
-      // update the draft transaction
-      slice.caseReducers.updateDraftTransaction(state);
     },
     updateRecipient: (state, action) => {
       state.recipient.address = action.payload.address ?? '';
@@ -657,8 +640,6 @@ const slice = createSlice({
 
       // validate send state
       slice.caseReducers.validateSendState(state);
-      // update the draft transaction
-      slice.caseReducers.updateDraftTransaction(state);
     },
     updateDraftTransaction: (state) => {
       // We keep a copy of txParams in state that could be submitted to the
@@ -743,7 +724,7 @@ const slice = createSlice({
           (toChecksumAddress(recipient.userInput) in contractMap ||
             checkExistingAddresses(recipient.userInput, tokens))
         ) {
-          recipient.warning = KNOWN_RECIPIENT_ADDRESS_ERROR;
+          recipient.warning = KNOWN_RECIPIENT_ADDRESS_WARNING;
         }
       }
     },
@@ -818,6 +799,8 @@ const slice = createSlice({
           break;
         default:
           state.status = SEND_STATUSES.VALID;
+          // Recompute the draftTransaction object
+          slice.caseReducers.updateDraftTransaction(state);
       }
     },
   },
@@ -916,7 +899,6 @@ const slice = createSlice({
         slice.caseReducers.validateAmountField(state);
         slice.caseReducers.validateGasField(state);
         slice.caseReducers.validateSendState(state);
-        slice.caseReducers.updateDraftTransaction(state);
       })
       .addCase(computeEstimatedGasLimit.pending, (state) => {
         // When we begin to fetch gasLimit the slice should be marked invalid

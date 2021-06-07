@@ -6,7 +6,7 @@ import {
   INSUFFICIENT_FUNDS_ERROR,
   INSUFFICIENT_TOKENS_ERROR,
   INVALID_RECIPIENT_ADDRESS_ERROR,
-  KNOWN_RECIPIENT_ADDRESS_ERROR,
+  KNOWN_RECIPIENT_ADDRESS_WARNING,
   NEGATIVE_ETH_ERROR,
 } from '../../pages/send/send.constants';
 import sendReducer, {
@@ -277,7 +277,7 @@ describe('Send Slice', () => {
         const recipientErrorState = {
           ...initialState,
           recipient: {
-            warning: KNOWN_RECIPIENT_ADDRESS_ERROR,
+            warning: KNOWN_RECIPIENT_ADDRESS_WARNING,
           },
           asset: {
             type: 'TOKEN',
