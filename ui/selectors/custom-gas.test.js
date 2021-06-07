@@ -110,10 +110,8 @@ describe('custom-gas selectors', () => {
     });
     it('should return false gas.basicEstimates.price 0x28bed01600 (175) (checkSend=true)', () => {
       const mockState = {
-        metamask: {
-          send: {
-            gasPrice: '0x28bed0160',
-          },
+        send: {
+          gasPrice: '0x28bed0160',
         },
         gas: {
           customData: { price: null },
@@ -124,10 +122,8 @@ describe('custom-gas selectors', () => {
     });
     it('should return true gas.basicEstimates.price 0x30e4f9b400 (210) (checkSend=true)', () => {
       const mockState = {
-        metamask: {
-          send: {
-            gasPrice: '0x30e4f9b400',
-          },
+        send: {
+          gasPrice: '0x30e4f9b400',
         },
         gas: {
           customData: { price: null },
@@ -220,9 +216,7 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
+
             preferences: {
               showFiatInTestnets: false,
             },
@@ -230,6 +224,9 @@ describe('custom-gas selectors', () => {
               type: 'mainnet',
               chainId: '0x1',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -271,9 +268,6 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
             preferences: {
               showFiatInTestnets: false,
             },
@@ -281,6 +275,9 @@ describe('custom-gas selectors', () => {
               type: 'rinkeby',
               chainId: '0x4',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -322,9 +319,7 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
+
             preferences: {
               showFiatInTestnets: true,
             },
@@ -332,6 +327,9 @@ describe('custom-gas selectors', () => {
               type: 'rinkeby',
               chainId: '0x4',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -367,9 +365,7 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
+
             preferences: {
               showFiatInTestnets: true,
             },
@@ -377,6 +373,9 @@ describe('custom-gas selectors', () => {
               type: 'mainnet',
               chainId: '0x1',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -428,9 +427,7 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 255.71,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
+
             preferences: {
               showFiatInTestnets: false,
             },
@@ -438,6 +435,9 @@ describe('custom-gas selectors', () => {
               type: 'mainnet',
               chainId: '0x1',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -473,9 +473,7 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
+
             preferences: {
               showFiatInTestnets: false,
             },
@@ -483,6 +481,9 @@ describe('custom-gas selectors', () => {
               type: 'mainnet',
               chainId: '0x1',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -524,9 +525,6 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
             preferences: {
               showFiatInTestnets: false,
             },
@@ -534,6 +532,9 @@ describe('custom-gas selectors', () => {
               type: 'rinkeby',
               chainId: '0x4',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -575,9 +576,6 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
             preferences: {
               showFiatInTestnets: true,
             },
@@ -585,6 +583,9 @@ describe('custom-gas selectors', () => {
               type: 'rinkeby',
               chainId: '0x4',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
@@ -620,9 +621,6 @@ describe('custom-gas selectors', () => {
           metamask: {
             conversionRate: 2557.1,
             currentCurrency: 'usd',
-            send: {
-              gasLimit: '0x5208',
-            },
             preferences: {
               showFiatInTestnets: true,
             },
@@ -630,6 +628,9 @@ describe('custom-gas selectors', () => {
               type: 'mainnet',
               chainId: '0x1',
             },
+          },
+          send: {
+            gasLimit: '0x5208',
           },
           gas: {
             basicEstimates: {
