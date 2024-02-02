@@ -89,7 +89,7 @@
     "ws": "^7.4.6"
   },
   "dependencies": {
-    "3box": "^1.10.2",
+    "3box": "^1.19.1",
     "@babel/runtime": "^7.5.5",
     "@download/blockies": "^1.0.3",
     "@formatjs/intl-relativetimeformat": "^5.2.6",
@@ -188,7 +188,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "rpc-cap": "^3.2.1",
+    "rpc-cap": "^4.0.0",
     "safe-event-emitter": "^1.0.1",
     "ses": "^0.12.4",
     "single-call-balance-checker-abi": "^1.0.0",
